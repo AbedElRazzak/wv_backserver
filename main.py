@@ -4,7 +4,14 @@ from flask_cors import CORS
 from youtube_transcript_api import YouTubeTranscriptApi
 import pafy
 app = Flask(__name__)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
+CORS(app)
+cors = CORS(app, resources={
+    r"/*": {
+        "origins": "*"
+    }
+})
 
 @app.route('/')
 def index():
