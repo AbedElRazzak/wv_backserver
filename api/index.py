@@ -25,6 +25,7 @@ def index():
 
 @app.route('/api', methods=["POST"])
 def api():
+    vid_id = ""
     try:
         req_data = request.get_json()
         vid_url = req_data["url"]
