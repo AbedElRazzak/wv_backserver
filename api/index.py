@@ -25,25 +25,25 @@ def index():
 
 @app.route('/api', methods=["POST"])
 def api():
-
     try:
         req_data = request.get_json()
         vid_url = req_data["url"]
         pafy_vid = pafy.new(vid_url)
 
         vid_duration = pafy_vid.duration
-        vid_id = vid_url[32:len(vid_url)]
+        vid_id = vid_url[32:]
         transcript_list = YouTubeTranscriptApi.list_transcripts(vid_id)
         transcript = transcript_list.find_generated_transcript(['en'])
         transcript = transcript.fetch()
+
         resp_data = {
             "state": "success",
             "id": vid_id,
             "duration": vid_duration,
             "transcript": transcript
-            }
-        return resp_data
-    except:
+        }
+        return jsonify(resp_data)
+    except Exception as e:
         try:
             transcript = YouTubeTranscriptApi.get_transcript(vid_id)
             resp_data = {
@@ -51,16 +51,17 @@ def api():
                 "id": vid_id,
                 "duration": vid_duration,
                 "transcript": transcript
-                }
-            return resp_data
-        except:
+            }
+            return jsonify(resp_data)
+        except Exception as inner_e:
             resp_data = {
                 "state": "failed",
                 "id": "",
                 "duration": "",
-                "transcript": None
+                "transcript": None,
+                "error": str(inner_e)  # Capture the inner exception details
             }
-            return resp_data
+            return jsonify(resp_data), 400
     # req_data = request.get_json()
     # resp_data = {
     #     "status": "success",
