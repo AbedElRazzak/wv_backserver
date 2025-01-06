@@ -3,6 +3,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 from youtube_transcript_api import YouTubeTranscriptApi
 import pafy
+import pkg_resources
 app = Flask(__name__)
 app.config['CORS_HEADERS'] = 'Content-Type'
 
@@ -13,9 +14,14 @@ cors = CORS(app, resources={
     }
 })
 
+# @app.route('/')
+# def index():
+#     return jsonify({"Choo Choo": "Welcome to your Flask app 🚅"})
 @app.route('/')
 def index():
-    return jsonify({"Choo Choo": "Welcome to your Flask app 🚅"})
+    # Get installed packages and versions
+    installed_packages = [{"name": dist.project_name, "version": dist.version} for dist in pkg_resources.working_set]
+    return jsonify({"dependencies": installed_packages})
 
 @app.route('/api', methods=["POST"])
 def api():
